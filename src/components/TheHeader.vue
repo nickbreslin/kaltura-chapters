@@ -9,7 +9,7 @@
           class="d-inline-flex align-top"
         />
         <div class="title ms-3 me-3 fw-bold text-primary text-uppercase">
-          Dragon Horde
+          Video Complete
         </div>
       </div>
       <slot></slot>
