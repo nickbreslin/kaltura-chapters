@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath: process.env.NODE_ENV === "production" ? "" : "/",
+  publicPath: process.env.NODE_ENV === "production" ? "/video-complete/" : "/",
   chainWebpack: (config) => {
     config.plugin("html").tap((args) => {
       args[0].title =
