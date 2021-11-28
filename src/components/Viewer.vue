@@ -1,35 +1,150 @@
 <template>
-  <div>Viewer.</div>
-  <div id="myEmbedTarget" style="width: 400px; height: 330px"></div>
+  <div id="myEmbedTarget" style="width: 100%; height: 600px"></div>
 
-  <!-- <iframe
-    id="kaltura_player"
-    src="https://cdnapisec.kaltura.com/p/391241/sp/39124100/embedIframeJs/uiconf_id/22119142/partner_id/391241?iframeembed=true&playerId=kaltura_player&entry_id=0_tc7ecjwi&flashvars[localizationCode]=en&amp;flashvars[leadWithHTML5]=true&amp;flashvars[sideBarContainer.plugin]=true&amp;flashvars[sideBarContainer.position]=left&amp;flashvars[sideBarContainer.clickToClose]=true&amp;flashvars[chapters.plugin]=true&amp;flashvars[chapters.layout]=vertical&amp;flashvars[chapters.thumbnailRotator]=false&amp;flashvars[streamSelector.plugin]=true&amp;flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&amp;flashvars[dualScreen.plugin]=true&amp;flashvars[hotspots.plugin]=1&amp;flashvars[Kaltura.addCrossoriginToIframe]=true&amp;&wid=1_yxporfuz"
-    width="480"
-    height="304"
-    allowfullscreen
-    webkitallowfullscreen
-    mozAllowFullScreen
-    allow="autoplay *; fullscreen *; encrypted-media *"
-    sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation"
-    frameborder="0"
-    title="Kaltura Player"
-  ></iframe>-->
-  <!--<script src="http://cdnapi.kaltura.com/p/{partner_id}/sp/{partnerId}00/embedIframeJs/uiconf_id/{uiconf_id}/partner_id/{partnerId}"></script>-->
+  <div class="mb-3 mt-3 border rounded bg-secondary p-3">
+    <div class="row">
+      <EventMarker
+        class="col"
+        v-for="event in events"
+        :key="event.id"
+        v-bind="event"
+      />
+    </div>
+  </div>
+  <div class="row">
+    <!-- <div class="col">
+      <p>Duration: {{ duration }}</p>
+    </div>-->
+    <div class="col">
+      <div class="card">
+        <div class="card-header">Total watch time</div>
+        <div class="card-body">{{ totalWatchTime }} seconds</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-header">Thoroughness</div>
+        <div class="card-body">
+          {{ uniqueWatchTime }} seconds ({{ uniquePercent }}%)
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
+import EventMarker from "@/components/EventMarker.vue";
+
 export default {
   name: "Viewer",
-  props: {
-    title: {
-      type: String,
+  components: {
+    EventMarker,
+  },
+  data: function () {
+    return {
+      duration: 0,
+      isPlaying: false,
+      startFrom: 0,
+      watches: [],
+      events: [
+        {
+          id: "firstPlay",
+          label: "First Play",
+          fired: false,
+        },
+        {
+          id: "firstQuartile",
+          label: "25%",
+          fired: false,
+        },
+        {
+          id: "secondQuartile",
+          label: "50%",
+          fired: false,
+        },
+        {
+          id: "thirdQuartile",
+          label: "75%",
+          fired: false,
+        },
+        {
+          id: "playerPlayEnd",
+          label: "100%",
+          fired: false,
+        },
+      ],
+    };
+  },
+  computed: {
+    totalWatchTime() {
+      if (this.watches.length == 0) {
+        return Number(0).toPrecision(2);
+      }
+
+      if (this.watches.length == 1) {
+        return this.watches[0].duration.toPrecision(2);
+      }
+
+      let map = this.watches.map((e) => e.duration);
+
+      let total = map.reduce((sum, add) => {
+        return sum + add;
+      });
+
+      return total.toPrecision(2);
+    },
+    uniqueWatchTime() {
+      let watches = [...this.watches];
+      watches.sort((a, b) => (a.start > b.start ? 1 : -1));
+
+      let startFrom = 0;
+      let duration = 0;
+      watches.forEach((watch) => {
+        if (startFrom < watch.start) {
+          startFrom = watch.start;
+        }
+
+        let endTime = watch.start + watch.duration;
+
+        if (endTime > startFrom) {
+          duration += endTime - startFrom;
+          startFrom = endTime;
+        }
+      });
+      return duration.toPrecision(2);
+    },
+    uniquePercent() {
+      return Math.round((100 / this.duration) * this.uniqueWatchTime);
+    },
+  },
+  methods: {
+    setEvent(id) {
+      let index = this.events.findIndex((event) => event.id == id);
+
+      if (index >= 0) {
+        this.events[index].fired = true;
+      }
+    },
+    setStart(timestamp) {
+      this.startFrom = timestamp;
+    },
+    setEnd(timestamp) {
+      this.watches.push({
+        start: this.startFrom,
+        duration: timestamp - this.startFrom,
+      });
+    },
+    setDuration(duration) {
+      this.duration = duration;
+    },
+    setPlayState(value) {
+      this.isPlaying = value;
     },
   },
   mounted() {
     let partnerID = 391241;
     let uiconfID = 22119142;
-    let entryId = "0_tc7ecjwi";
+    let entryId = "1_9y74c1on"; //"0_tc7ecjwi";
 
     let recaptchaScript = document.createElement("script");
     recaptchaScript.setAttribute(
@@ -38,6 +153,7 @@ export default {
     );
     document.head.appendChild(recaptchaScript);
 
+    let ref = this;
     setTimeout(() => {
       window.kWidget.embed({
         targetId: "myEmbedTarget",
@@ -53,10 +169,64 @@ export default {
           wmode: "transparent",
         },
         readyCallback: function (playerId) {
-          console.log("kWidget player ready: " + playerId);
           var kdp = document.getElementById(playerId);
+
+          ref.setStart(0);
+          ref.setDuration(kdp.evaluate("{duration}"));
+
+          //---------------
+          ref.events.forEach((event) => {
+            kdp.kBind(event.id, function () {
+              ref.setEvent(event.id);
+            });
+          });
+
+          //--------------
+
           kdp.kBind("doPlay", function () {
-            console.log("doPlay called on  " + playerId);
+            let timestamp = kdp.evaluate("{video.player.currentTime}");
+            ref.setStart(timestamp);
+            ref.setPlayState(true);
+          });
+
+          kdp.kBind("playerPlayEnd", function () {
+            let timestamp = kdp.evaluate("{video.player.currentTime}");
+            if (ref.isPlaying) {
+              ref.setEnd(timestamp);
+              ref.setPlayState(false);
+            }
+          });
+          kdp.kBind("durationChange", function (e) {
+            console.log(e);
+            ref.setDuration(e.newValue);
+          });
+
+          kdp.kBind("pause", function () {
+            let timestamp = kdp.evaluate("{video.player.currentTime}");
+            if (ref.isPlaying) {
+              ref.setEnd(timestamp);
+              ref.setPlayState(false);
+            }
+          });
+
+          kdp.kBind("playerPlayEnd", function () {
+            ref.setEnd(ref.duration);
+          });
+
+          kdp.kBind("play", function () {
+            let timestamp = kdp.evaluate("{video.player.currentTime}");
+            ref.setStart(timestamp);
+            ref.setPlayState(true);
+          });
+
+          kdp.kBind("seek", function (timestamp) {
+            if (ref.isPlaying) {
+              ref.setEnd(timestamp);
+            }
+          });
+
+          kdp.kBind("seeked", function (timestamp) {
+            ref.setStart(timestamp);
           });
         },
       });
