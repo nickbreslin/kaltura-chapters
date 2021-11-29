@@ -1,6 +1,6 @@
 {
-  "name": "video-complete",
-  "version": "0.1.0",
+  "name": "kaltura",
+  "version": "1.0.0",
   "description": "vue3 bootstrap5 boilerplate",
   "license": "Unlicense",
   "scripts": {
