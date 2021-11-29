@@ -11,34 +11,37 @@
       />
     </div>
   </div>
-  <div class="row">
+  <div class="row mb-5">
     <!-- <div class="col">
       <p>Duration: {{ duration }}</p>
     </div>-->
     <div class="col">
       <div class="card">
         <div class="card-header">Total watch time</div>
-        <div class="card-body">{{ totalWatchTime }} seconds</div>
+        <div class="card-body h2">{{ totalWatchTime }} seconds</div>
       </div>
     </div>
     <div class="col">
       <div class="card">
         <div class="card-header">Thoroughness</div>
-        <div class="card-body">
+        <div class="card-body h2">
           {{ uniqueWatchTime }} seconds ({{ uniquePercent }}%)
         </div>
       </div>
     </div>
   </div>
+  <StackChart :chartData="watches" :duration="duration" />
 </template>
 
 <script>
 import EventMarker from "@/components/EventMarker.vue";
+import StackChart from "@/components/StackChart.vue";
 
 export default {
   name: "Viewer",
   components: {
     EventMarker,
+    StackChart,
   },
   data: function () {
     return {
@@ -78,11 +81,11 @@ export default {
   computed: {
     totalWatchTime() {
       if (this.watches.length == 0) {
-        return Number(0).toPrecision(2);
+        return Number(0).toFixed(2);
       }
 
       if (this.watches.length == 1) {
-        return this.watches[0].duration.toPrecision(2);
+        return this.watches[0].duration.toFixed(2);
       }
 
       let map = this.watches.map((e) => e.duration);
@@ -91,7 +94,7 @@ export default {
         return sum + add;
       });
 
-      return total.toPrecision(2);
+      return total.toFixed(2);
     },
     uniqueWatchTime() {
       let watches = [...this.watches];
@@ -111,7 +114,7 @@ export default {
           startFrom = endTime;
         }
       });
-      return duration.toPrecision(2);
+      return duration.toFixed(2);
     },
     uniquePercent() {
       return Math.round((100 / this.duration) * this.uniqueWatchTime);
@@ -197,7 +200,6 @@ export default {
             }
           });
           kdp.kBind("durationChange", function (e) {
-            console.log(e);
             ref.setDuration(e.newValue);
           });
 
