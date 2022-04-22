@@ -60,8 +60,8 @@ export default {
     chapters() {
       let chapters = this.validLines.map((line) => {
         const parts = line.split(" ");
-        let timestamp = parts[0];
-        let label = parts[1];
+        let timestamp = parts.shift();
+        let label = parts.join(" ");
         label = label.trim();
 
         const timeParts = timestamp.split(":");
