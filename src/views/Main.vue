@@ -1,31 +1,28 @@
 <template>
-    <div class="row">
-      <div class="col-4">
-        <Chapters :chapters="chapters" @setSeconds="setSeconds($event)" />
-      </div>
-      <div class="col-8">
-        <Viewer :seconds="seconds" />
-        <textarea
-          class="form-control mt-5"
-          rows="10"
-          v-model="description"
-        ></textarea>
-        <small>Each chapter needs the format:<br />00:00 Chapter Title</small>
-      </div>
+  <div class="row">
+    <div class="col-4">
+      <Chapters :chapters="chapters" @setSeconds="setSeconds($event)" />
+    </div>
+    <div class="col-8">
+      <Viewer :seconds="seconds" />
+      <textarea
+        class="form-control mt-5"
+        rows="10"
+        v-model="description"
+      ></textarea>
+      <small>Each chapter needs the format:<br />00:00 Chapter Title</small>
     </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
 import Chapters from "@/components/Chapters";
 
 import Viewer from "@/components/Viewer";
-import TheFooter from "@/components/TheFooter";
 
 export default {
   name: "Home",
-  components: { Chapters, Viewer, TheFooter },
+  components: { Chapters, Viewer },
   data() {
     return {
       description: "",
