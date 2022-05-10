@@ -1,23 +1,17 @@
 <template>
-  <div class="home">
-    <div class="container mt-5">
-      <div class="h1 border-bottom mb-5">Kaltura Chapters Demo</div>
-
-      <div class="row">
-        <div class="col-4">
-          <Chapters :chapters="chapters" @setSeconds="setSeconds($event)" />
-        </div>
-        <div class="col-8">
-          <Viewer :seconds="seconds" />
-          <textarea
-            class="form-control mt-5"
-            rows="10"
-            v-model="description"
-          ></textarea>
-          <small>Each chapter needs the format:<br />00:00 Chapter Title</small>
-        </div>
+    <div class="row">
+      <div class="col-4">
+        <Chapters :chapters="chapters" @setSeconds="setSeconds($event)" />
       </div>
-      <TheFooter />
+      <div class="col-8">
+        <Viewer :seconds="seconds" />
+        <textarea
+          class="form-control mt-5"
+          rows="10"
+          v-model="description"
+        ></textarea>
+        <small>Each chapter needs the format:<br />00:00 Chapter Title</small>
+      </div>
     </div>
   </div>
 </template>
