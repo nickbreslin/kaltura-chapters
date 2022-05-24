@@ -6,8 +6,8 @@
       class="mb-3"
       @click="setSeconds(chapter.seconds)"
     >
-      <div class="fw-bold">{{ chapter.label }}</div>
-      <img class="img-fluid" :src="getURL(chapter.seconds)" />
+      <div class="btn btn-primary w-100 fw-bold h2">{{ chapter.label }}</div>
+      <img class="img-fluidd d-none" :src="getURL(chapter.seconds)" />
     </div>
   </div>
 </template>
@@ -17,7 +17,7 @@ export default {
   name: "Chapters",
   components: {},
   props: {
-    chapters: Array,
+    chapters: Array
   },
   computed: {},
   methods: {
@@ -28,7 +28,7 @@ export default {
     },
     setSeconds(seconds) {
       this.$emit("setSeconds", seconds);
-    },
-  },
+    }
+  }
 };
 </script>

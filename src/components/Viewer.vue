@@ -8,17 +8,17 @@ export default {
   components: {},
   data: function () {
     return {
-      kdp: null,
+      kdp: null
     };
   },
   props: {
-    seconds: Number,
+    seconds: Number
   },
   watch: {
     seconds() {
       console.log("calling...", this.seconds);
       this.kdp.sendNotification("doSeek", this.seconds);
-    },
+    }
   },
   mounted() {
     let partnerID = 391241;
@@ -41,17 +41,17 @@ export default {
         entry_id: `${entryId}`,
         flashvars: {
           // flashvars allows you to set runtime uiVar configuration overrides.
-          autoPlay: false,
+          autoPlay: false
         },
         params: {
           // params allows you to set flash embed params such as wmode, allowFullScreen etc
-          wmode: "transparent",
+          wmode: "transparent"
         },
         readyCallback: function (playerId) {
           ref.kdp = document.getElementById(playerId);
-        },
+        }
       });
     }, 1000);
-  },
+  }
 };
 </script>
