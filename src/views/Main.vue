@@ -26,7 +26,7 @@ export default {
   data() {
     return {
       description: "",
-      seconds: 0,
+      seconds: 0
     };
   },
   computed: {
@@ -65,16 +65,17 @@ export default {
         return {
           seconds: totalSeconds,
           label: label,
+          timestamp: timestamp
         };
       });
 
       return chapters;
-    },
+    }
   },
   methods: {
     setSeconds(seconds) {
       this.seconds = seconds;
-    },
-  },
+    }
+  }
 };
 </script>

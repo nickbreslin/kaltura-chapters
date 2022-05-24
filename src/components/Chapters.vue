@@ -1,13 +1,18 @@
 <template>
-  <div class="card card-body">
-    <div
-      v-for="(chapter, i) in chapters"
-      :key="i"
-      class="mb-3"
-      @click="setSeconds(chapter.seconds)"
-    >
-      <div class="btn btn-primary w-100 fw-bold h2">{{ chapter.label }}</div>
-      <img class="img-fluidd d-none" :src="getURL(chapter.seconds)" />
+  <div
+    v-for="(chapter, i) in chapters"
+    :key="i"
+    class="mb-3 clickable"
+    @click="setSeconds(chapter.seconds)"
+  >
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <div class="fw-bold">{{ chapter.label }}</div>
+        <span class="badge bg-primary pt-2 pb-2">{{ chapter.timestamp }}</span>
+      </div>
+      <div class="card-body">
+        <img class="img-fluid" :src="getURL(chapter.seconds)" />
+      </div>
     </div>
   </div>
 </template>
@@ -15,7 +20,6 @@
 <script>
 export default {
   name: "Chapters",
-  components: {},
   props: {
     chapters: Array
   },
@@ -32,3 +36,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.clickable {
+  cursor: pointer;
+}
+</style>
